@@ -19,6 +19,7 @@ class PortofolioFactory extends Factory
         return [
             'title' => fake()->sentence(mt_rand(3, 8)),
             'target' => fake()->numberBetween(10000, 1000000),
+            'terkumpul' => fake()->numberBetween(10000, 1000000),
             'user_id' => mt_rand(1, 3)
         ];
     }

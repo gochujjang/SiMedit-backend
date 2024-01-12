@@ -142,6 +142,7 @@ class TransactionController extends Controller
         }
     }
 
+
     // Sisa uang transakasi
     public function totalMoney(Request $request){
         try{
