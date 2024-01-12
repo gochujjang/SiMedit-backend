@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PortofolioController;
 use App\Http\Controllers\PortotransController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/password-email', [AuthController::class, 'forgotEmail']);
+
+// Yang buat lupa
 Route::post('/password-reset', [AuthController::class, 'resetPassword']);
 
 
@@ -37,6 +40,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/user', function(Request $request) {
         return $request->user();
     });
+
+    // Reset Password yang di profile
+    Route::post('/reset-password', [ProfileController::class, 'ResetPassword']);
+
+    // Update Profile
+    Route::post('/update-profile', [ProfileController::class, 'UpdateProfile']);
 
 
     // Semua transaksi
@@ -66,5 +75,15 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     
     // Insert data transaksi portofolio
     Route::post('/portofolio-transaction', [PortotransController::class, 'store']);
+
+
+
+    // Total Target Portofolio
+    Route::get('/total-target', [PortofolioController::class, 'TotalTarget']);
+    // Total terkumpul portofolio
+    Route::get('/total-terkumpul', [PortofolioController::class, 'TotalTerkumpul']);
+
+    // Logout
+    Route::get('/logout', [AuthController::class, 'logout']);
 
 });
