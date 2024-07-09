@@ -7,6 +7,8 @@ use App\Models\Portofolio;
 use App\Models\Portotrans;
 use Illuminate\Http\Request;
 
+use function PHPSTORM_META\map;
+
 class PortofolioController extends Controller
 {
     public function index(Request $request){
@@ -59,17 +61,41 @@ class PortofolioController extends Controller
 
     public function TotalTarget(Request $request){
 
-        $id = $request->user();
-        $total_target = Portofolio::where('user_id', $id['id'])->sum('target');
 
-        return response()->json($total_target);
+
+        try {
+            $id = $request->user();
+            $total_target = Portofolio::where('user_id', $id['id'])->sum('target');
+            return new MeditResource(
+                true,
+                200,
+                "Success",
+                $total_target
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
     }
     public function TotalTerkumpul(Request $request){
-
-        $id = $request->user();
-        $total_target = Portofolio::where('user_id', $id['id'])->sum('terkumpul');
-
-        return response()->json($total_target);
+        try {
+            $id = $request->user();
+            $total_target = Portofolio::where('user_id', $id['id'])->sum('terkumpul');
+            return new MeditResource(
+                true,
+                200,
+                "Success",
+                $total_target
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
+        // return response()->json($total_target);
     }
 
 

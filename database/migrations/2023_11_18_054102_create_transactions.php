@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer("nominal");
             $table->date("tgl");
-            $table->string("Keterangan");
+            $table->string("keterangan");
             $table->enum('status', ['pemasukan', 'pengeluaran']);
             $table->foreignId("user_id");
             $table->timestamps();

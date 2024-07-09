@@ -56,7 +56,7 @@ class TransactionController extends Controller
             $validated = $request->validate([
                 'nominal' => 'required',
                 'tgl' => 'required',
-                'Keterangan' => 'required',
+                'keterangan' => 'required',
                 'status' => 'required'
             ]);
 
