@@ -29,7 +29,7 @@ class MeditResource extends JsonResource
             'success' => $this->status,
             'code' => $this->code,
             'message' => $this->message,
-            'data' => $this->resource
+            'data' => $this->resource,
         ];
     }
 }

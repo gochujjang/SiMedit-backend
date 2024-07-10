@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer("nominal");
             $table->foreignId("porto_id");
+            $table->string("keterangan");
             $table->enum('status', ['pemasukan', 'pengeluaran']);
             // $table->foreignId("user_id");
             $table->timestamps();

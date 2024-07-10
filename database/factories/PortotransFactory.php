@@ -19,6 +19,7 @@ class PortotransFactory extends Factory
         return [
             'nominal' => fake()->numberBetween(10000, 1000000),
             'porto_id' => mt_rand(1, 3),
+            '' => fake()->sentence(mt_rand(2, 15)),
             'status' => fake()->randomElement(['pemasukan', 'pengeluaran']),
             // 'user_id' => mt_rand(1, 3)
         ];

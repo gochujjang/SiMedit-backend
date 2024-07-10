@@ -33,14 +33,18 @@ class PortofolioController extends Controller
 
     public function detail(Request $request, $id) {
         try {
-            $data = Portofolio::where('id', $id)->where('user_id', $request->user()->id)->first();
-    
+            $data = Portofolio::where('id', $id)
+            ->where('user_id', $request->user()->id)
+            ->with('transaksi_porto')
+            ->first();
+
             if (!$data) {
                 return response()->json([
                     'message' => 'Portfolio not found or access denied',
                     'status' => 404
                 ], 404);
             }
+
     
             return new MeditResource(
                 true, 

@@ -27,6 +27,7 @@ class PortotransController extends Controller
             $validatedData = $request->validate([
                 'nominal' => 'required',
                 'porto_id' => 'required',
+                'keterangan' => 'required',
                 'status' => 'required',
             ]);
 
