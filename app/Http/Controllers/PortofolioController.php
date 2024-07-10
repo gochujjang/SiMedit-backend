@@ -31,6 +31,32 @@ class PortofolioController extends Controller
         
     }
 
+    public function detail(Request $request, $id) {
+        try {
+            $data = Portofolio::where('id', $id)->where('user_id', $request->user()->id)->first();
+    
+            if (!$data) {
+                return response()->json([
+                    'message' => 'Portfolio not found or access denied',
+                    'status' => 404
+                ], 404);
+            }
+    
+            return new MeditResource(
+                true, 
+                200, 
+                "Success", 
+                $data
+            );
+    
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
+    }
+
     public function store(Request $request){
         try{
              $validated = $request->validate([

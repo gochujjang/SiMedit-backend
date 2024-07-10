@@ -67,6 +67,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     // Semua data portofolio
     Route::get('/portofolio', [PortofolioController::class, 'index']);
     
+    // detail portofolio
+    Route::get('/portofolio/{id}', [PortofolioController::class, 'detail']);
+
     // insert data portofolio
     Route::post('/portofolio', [PortofolioController::class, 'store']);
     
