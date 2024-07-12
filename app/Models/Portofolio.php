@@ -21,4 +21,14 @@ class Portofolio extends Model
     public function transaksi_porto(){
         return $this->hasMany(Portotrans::class, 'porto_id');
     }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'porto_members');
+    }
+
+    public function portoMembers()
+    {
+        return $this->hasMany(PortoMember::class);
+    }
 }

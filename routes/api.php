@@ -86,6 +86,11 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     // Total terkumpul portofolio
     Route::get('/total-terkumpul', [PortofolioController::class, 'TotalTerkumpul']);
 
+
+    Route::post('/portofolio/{portfolio_id}/invite', [PortofolioController::class, 'inviteUser']);
+    Route::get('/portofolio/{portfolio_id}/members', [PortofolioController::class, 'getMembers']);
+
+
     // Logout
     Route::get('/logout', [AuthController::class, 'logout']);
 

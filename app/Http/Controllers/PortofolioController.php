@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MeditResource;
 use App\Models\Portofolio;
+use App\Models\PortoMember;
 use App\Models\Portotrans;
 use Illuminate\Http\Request;
 
@@ -11,25 +12,28 @@ use function PHPSTORM_META\map;
 
 class PortofolioController extends Controller
 {
-    public function index(Request $request){
-        try{
-            $id = $request->user();
-            $data = Portofolio::where('user_id', $id['id'])->latest()->get();
-            return new MeditResource(
-                true, 
-                200, 
-                "Success", 
-                $data
-            );
+    public function index(Request $request)
+{
+    try {
+        $user_id = $request->user()->id;
 
-        }catch(\Exception $e){
-            return response()->json([
-                'message' => $e->getMessage(),
-                'status' => 400
-            ], 400);
-        }
-        
+        // Ambil semua portofolio yang dimiliki oleh user atau diundang sebagai anggota
+        $portofolios = Portofolio::where('user_id', $user_id)
+                        ->orWhereHas('members', function ($query) use ($user_id) {
+                            $query->where('users.id', $user_id);
+                        })
+                        ->latest()
+                        ->get();
+
+        return new MeditResource(true, 200, "Success", $portofolios);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => $e->getMessage(),
+            'status' => 400
+        ], 400);
     }
+}
+
 
     public function detail(Request $request, $id) {
         try {
@@ -126,6 +130,65 @@ class PortofolioController extends Controller
             ], 400);
         }
         // return response()->json($total_target);
+    }
+
+    public function inviteUser(Request $request, $portfolio_id)
+{
+    try {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $portfolio = Portofolio::findOrFail($portfolio_id);
+
+        // Check if the authenticated user owns the portfolio
+        if ($portfolio->user_id !== $request->user()->id) {
+            return response()->json([
+                'message' => 'Access denied',
+                'status' => 403
+            ], 403);
+        }
+
+        // Add user to the portfolio
+        $portfolio->members()->attach($validated['user_id']);
+
+        // Update PortoMember
+        PortoMember::create([
+            'portofolio_id' => $portfolio_id,
+            'user_id' => $validated['user_id']
+        ]);
+
+        return new MeditResource(true, 200, "User invited successfully", $portfolio->members);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => $e->getMessage(),
+            'status' => 400
+        ], 400);
+    }
+}
+
+
+
+    public function getMembers($portfolio_id)
+    {
+        try {
+            $portfolio = Portofolio::with('members')->findOrFail($portfolio_id);
+
+            // Check if the authenticated user is a member of the portfolio
+            if (!$portfolio->members->contains('id', auth()->user()->id)) {
+                return response()->json([
+                    'message' => 'Access denied',
+                    'status' => 403
+                ], 403);
+            }
+
+            return new MeditResource(true, 200, "Success", $portfolio->members);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
     }
 
 
