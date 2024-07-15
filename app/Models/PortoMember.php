@@ -18,4 +18,9 @@ class PortoMember extends Model
     {
         return $this->belongsTo(Portofolio::class);
     }
+
+    public function portoTrans()
+    {
+        return $this->hasMany(Portotrans::class);
+    }
 }

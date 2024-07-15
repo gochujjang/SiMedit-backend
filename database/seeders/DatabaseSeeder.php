@@ -5,10 +5,12 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\Portofolio;
+use App\Models\PortoMember;
 use App\Models\Portotrans;
 use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -19,7 +21,8 @@ class DatabaseSeeder extends Seeder
         User::factory(3)->create();
         Transaction::factory(30)->create();
         Portofolio::factory(3)->create();
-        Portotrans::factory(30)->create();
+        PortoMember::factory(3)->create();
+        // Portotrans::factory(30)->create();
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
@@ -27,3 +30,4 @@ class DatabaseSeeder extends Seeder
         // ]);
     }
 }
+
