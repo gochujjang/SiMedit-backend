@@ -11,7 +11,7 @@ class Portotrans extends Model
 
     protected $guarded = ["id"];
 
-    public function portofolio(){
-        return $this->belongsTo(Portofolio::class);
+    public function portoMember(){
+        return $this->belongsTo(PortoMember::class);
     }
 }

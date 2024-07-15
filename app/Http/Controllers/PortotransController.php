@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\MeditResource;
 use App\Models\Portofolio;
+use App\Models\PortoMember;
 use App\Models\Portotrans;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PortotransController extends Controller
@@ -26,21 +28,27 @@ class PortotransController extends Controller
         try{
             $validatedData = $request->validate([
                 'nominal' => 'required',
-                'porto_id' => 'required',
+                'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
             ]);
 
-            $porto_id = $validatedData['porto_id'];
+            $portomember_id = $validatedData['portomember_id'];
 
-            $porto_terkumpul = Portofolio::where('id', $porto_id)->pluck('terkumpul');
-            $porto_target = Portofolio::where('id', $porto_id)->pluck('target');
+            $porto_id = PortoMember::where('id', $portomember_id)->pluck('portofolio_id');
+
+            $porto_terkumpul = Portofolio::where('id', $porto_id[0])->pluck('terkumpul');
+            $porto_target = Portofolio::where('id', $porto_id[0])->pluck('target');
+
+            $user_data = User::where('id', (int)$portomember_id)->select('username', 'email')->first();
+
+            
 
             
             if($validatedData['status'] == 'pemasukan'){
                 $persentase = (($porto_terkumpul[0] + (int)$validatedData['nominal']) / $porto_target[0]) * 100;
                 Portotrans::create($validatedData);
-                Portofolio::where('id', $porto_id)->update(['terkumpul' => $porto_terkumpul[0] + (int)$validatedData['nominal'], 'persentase' => $persentase]);
+                Portofolio::where('id', $porto_id[0])->update(['terkumpul' => $porto_terkumpul[0] + (int)$validatedData['nominal'], 'persentase' => $persentase]);
             }else{
                 if($porto_terkumpul[0] < (int)$validatedData['nominal']){
                      return response()->json([
@@ -50,10 +58,11 @@ class PortotransController extends Controller
                 }else{
                     $persentase = (($porto_terkumpul[0] - (int)$validatedData['nominal']) / $porto_target[0]) * 100;
                     Portotrans::create($validatedData);
-                    Portofolio::where('id', $porto_id)->update(['terkumpul' => $porto_terkumpul[0] - (int)$validatedData['nominal'], 'persentase' => $persentase]);
+                    Portofolio::where('id', $porto_id[0])->update(['terkumpul' => $porto_terkumpul[0] - (int)$validatedData['nominal'], 'persentase' => $persentase]);
                 }
             }
             // return response()->json();
+            $validatedData['user_Data'] = $user_data;
             return new MeditResource(true, 200, "success", $validatedData);
         }catch(\Exception $e){
             return response()->json([

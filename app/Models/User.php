@@ -48,9 +48,9 @@ class User extends Authenticatable
     //     return $this->hasMany(Portofolio::class);
     // }
 
-    public function portofolio()
+    public function portoMember()
     {
-        return $this->belongsToMany(Portofolio::class, 'porto_members');
+        return $this->belongsToMany(PortoMember::class, 'porto_members');
     }
     public function transaction(){
         return $this->hasMany(Transaction::class);
