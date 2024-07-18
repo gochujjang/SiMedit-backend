@@ -25,6 +25,7 @@ class MeditResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        
         return [
             'success' => $this->status,
             'code' => $this->code,

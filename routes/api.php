@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/portofolio', [PortofolioController::class, 'index']);
     
     // detail portofolio
-    Route::get('/portofolio/{id}', [PortofolioController::class, 'detail']);
+    // Route::get('/portofolio/{id}', [PortofolioController::class, 'detail']);
 
     // insert data portofolio
     Route::post('/portofolio', [PortofolioController::class, 'store']);
@@ -93,9 +93,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
 
     // Inviate member
-    Route::post('/portofolio-invite-member', [PortoMemberController::class, 'InviteMember']);
+    Route::post('/portofolio-invite', [PortoMemberController::class, 'InviteMember']);
     // Mengambil detail portofolio (kl klik salh satu portofolio)
-    Route::get('/getPortoDetail/{id}', [PortofolioController::class, 'getPortoDetail']);
+    Route::get('/portofolio/{id}', [PortofolioController::class, 'getPortoDetail']);
 
 
     // Logout

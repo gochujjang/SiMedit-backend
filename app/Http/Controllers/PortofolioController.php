@@ -164,7 +164,7 @@ class PortofolioController extends Controller
 
     public function getPortoDetail($id, Request $request){
         try{
-            $portoData = Portofolio::where('id', $id)->first();
+            $portoData = Portofolio::with('transaksi_porto.user')->where('id', $id)->first();
             $portoId = $portoData->id;
 
             $id = $request->user();
