@@ -18,12 +18,20 @@ class PortofolioController extends Controller
         $user_id = $request->user()->id;
 
         // Ambil semua portofolio yang dimiliki oleh user atau diundang sebagai anggota
-        $portofolios = Portofolio::where('user_id', $user_id)
-                        ->orWhereHas('members', function ($query) use ($user_id) {
-                            $query->where('users.id', $user_id);
-                        })
-                        ->latest()
-                        ->get();
+        // $portofolios = Portofolio::where('user_id', $user_id)
+        //                 ->orWhereHas('members', function ($query) use ($user_id) {
+        //                     $query->where('users.id', $user_id);
+        //                 })
+        //                 ->latest()
+        //                 ->get();
+
+        // $portofolios = Portofolio::where([['porto_members.portofolio_id', '=', 'portofolios.id'], ['porto_members.user_id', '=', 'users.id'], ['users.id', '=', $user_id]])->latest();
+
+       $portofolios = Portofolio::select('*')
+        ->join('porto_members', 'porto_members.portofolio_id', '=', 'portofolios.id')
+        ->join('users', 'porto_members.user_id', '=', 'users.id')
+        ->where('users.id', $user_id)
+        ->get();
 
         return new MeditResource(true, 200, "Success", $portofolios);
     } catch (\Exception $e) {
@@ -111,12 +119,16 @@ class PortofolioController extends Controller
 
         try {
             $id = $request->user();
-            $total_target = Portofolio::where('user_id', $id['id'])->sum('target');
+            $totaltarget = Portofolio::select(Portofolio::raw('sum(portofolios.target) as total_target'))
+                ->join('porto_members', 'porto_members.portofolio_id', '=', 'portofolios.id')
+                ->join('users', 'porto_members.user_id', '=', 'users.id')
+                ->where('users.id', $id['id'])
+                ->first();
             return new MeditResource(
                 true,
                 200,
                 "Success",
-                $total_target
+                $totaltarget
             );
         } catch (\Exception $e) {
             return response()->json([
@@ -128,12 +140,18 @@ class PortofolioController extends Controller
     public function TotalTerkumpul(Request $request){
         try {
             $id = $request->user();
-            $total_target = Portofolio::where('user_id', $id['id'])->sum('terkumpul');
+            // $total_target = Portofolio::where('user_id', $id['id'])->sum('terkumpul');
+            $totalTerkumpul = Portofolio::select(Portofolio::raw('sum(portofolios.terkumpul) as total_terkumpul'))
+                ->join('porto_members', 'porto_members.portofolio_id', '=', 'portofolios.id')
+                ->join('users', 'porto_members.user_id', '=', 'users.id')
+                ->where('users.id', $id['id'])
+                ->first();
+
             return new MeditResource(
                 true,
                 200,
                 "Success",
-                $total_target
+                $totalTerkumpul
             );
         } catch (\Exception $e) {
             return response()->json([
