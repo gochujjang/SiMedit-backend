@@ -33,6 +33,12 @@ class PortotransController extends Controller
                 'status' => 'required',
             ]);
 
+            // Get the user ID from the request
+            $userId = $request->user()->id;
+
+            // Add user_id to the validated data
+            $validatedData['user_id'] = $userId;
+
             $portomember_id = $validatedData['portomember_id'];
 
             $porto_id = PortoMember::where('id', $portomember_id)->select('portofolio_id', 'user_id')->first();

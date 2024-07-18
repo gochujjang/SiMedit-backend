@@ -26,4 +26,9 @@ class Portofolio extends Model
     public function transaksi_porto(){
         return $this->hasMany(Portotrans::class, 'portomember_id');
     }
+
+    // public function transaksi_porto()
+    // {
+    //     return $this->hasManyThrough(Portotrans::class, PortoMember::class, 'portofolio_id', 'portomember_id');
+    // }
 }

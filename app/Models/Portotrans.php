@@ -20,13 +20,13 @@ class Portotrans extends Model
         return $this->belongsTo(PortoMember::class);
     }
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'portomember_id', 'id');
-    // }
-
     public function user()
     {
-        return $this->belongsTo(PortoMember::class, 'portomember_id', 'id');
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    // public function user()
+    // {
+    //     return $this->belongsTo(PortoMember::class, 'portomember_id', 'id');
+    // }
 }

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer("nominal");
             $table->foreignId("portomember_id");
+            $table->foreignId("user_id")->constrained('users');
             $table->string("keterangan");
             $table->enum('status', ['pemasukan', 'pengeluaran']);
             // $table->foreignId("user_id");
