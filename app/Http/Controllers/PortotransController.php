@@ -8,6 +8,7 @@ use App\Models\PortoMember;
 use App\Models\Portotrans;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PortotransController extends Controller
 {
@@ -36,18 +37,20 @@ class PortotransController extends Controller
             // Get the user ID from the request
             $userId = $request->user()->id;
 
+
             // Add user_id to the validated data
-            $validatedData['user_id'] = $userId;
+            $validatedData['user_id'] = Auth::user()->id;
 
             $portomember_id = $validatedData['portomember_id'];
 
-            $porto_id = PortoMember::where('id', $portomember_id)->select('portofolio_id', 'user_id')->first();
+            $porto_id = PortoMember::where('portofolio_id', $portomember_id)->select('portofolio_id', 'user_id')->first();
 
             $porto_terkumpul = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('terkumpul');
             $porto_target = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('target');
 
 
-            $user_data = User::where('id', (int)$porto_id['user_id'])->select('username', 'email')->first();
+            // $user_data = User::where('id', (int)$porto_id['user_id'])->select('username', 'email')->first();
+            $user_data = User::where('id', $userId)->select('username', 'email')->first();
 
             
 
