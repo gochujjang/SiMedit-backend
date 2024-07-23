@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId("user_id")->constrained('users');
             $table->string("keterangan");
             $table->enum('status', ['pemasukan', 'pengeluaran']);
+            $table->string('foto');
             // $table->foreignId("user_id");
             $table->timestamps();
         });

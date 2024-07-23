@@ -114,9 +114,6 @@ class PortofolioController extends Controller
     }
 
     public function TotalTarget(Request $request){
-
-
-
         try {
             $id = $request->user();
             $totaltarget = Portofolio::select(Portofolio::raw('sum(portofolios.target) as total_target'))
@@ -178,6 +175,41 @@ class PortofolioController extends Controller
             );
             
         }catch(\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
+    }
+
+    public function delete($id, Request $request) {
+        try {
+            $user_id = $request->user()->id;
+
+            $portfolioMember = PortoMember::where('portofolio_id', $id)
+                ->where('user_id', $user_id)
+                ->where('status', 'owner')
+                ->first();
+
+            if (!$portfolioMember) {
+                return response()->json([
+                    'message' => 'Portfolio not found or access denied',
+                    'status' => 404
+                ], 404);
+            }
+
+            // Delete related PortoMember records
+            PortoMember::where('portofolio_id', $id)->delete();
+
+            // Delete related Portotrans records
+            Portotrans::where('portomember_id', $id)->delete();
+
+            // Delete the portfolio
+            Portofolio::where('id', $id)->delete();
+
+            return new MeditResource(true, 200, "Portfolio deleted successfully", null);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'status' => 400

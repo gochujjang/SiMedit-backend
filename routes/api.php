@@ -80,6 +80,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     // Insert data transaksi portofolio
     Route::post('/portofolio-transaction', [PortotransController::class, 'store']);
 
+    //list member
+    Route::get('/listmember/{id}', [PortoMemberController::class, 'listMember']);
+
+    //delete porto
+    Route::delete('/portofolio/{id}', [PortofolioController::class, 'delete']);
+    Route::delete('/portofolio/{portofolio_id}/member/{member_id}', [PortoMemberController::class, 'deleteMember']);
 
 
     // Total Target Portofolio

@@ -9,6 +9,7 @@ use App\Models\Portotrans;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PortotransController extends Controller
 {
@@ -32,10 +33,12 @@ class PortotransController extends Controller
                 'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
+                'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
             ]);
 
             // Get the user ID from the request
             $userId = $request->user()->id;
+            $userName = $request->user()->name;
 
 
             // Add user_id to the validated data
@@ -52,7 +55,19 @@ class PortotransController extends Controller
             // $user_data = User::where('id', (int)$porto_id['user_id'])->select('username', 'email')->first();
             $user_data = User::where('id', $userId)->select('username', 'email')->first();
 
-            
+            //upload foto
+            if($request->file('foto')){
+                $randomString = Str::random(20);
+                // Generate a unique file name with user name and description
+                $extension = $request->file('foto')->getClientOriginalExtension();
+                $filename = $userName . '_' . $randomString . '.' . $extension;
+                
+                // Ensure the filename is URL-safe
+                $filename = preg_replace('/[^A-Za-z0-9\-]/', '_', $filename);
+
+                $path = $request->file('foto')->storeAs('bukti-pembayaran', $filename);
+                $validatedData['foto'] = env('APP_URL') . '/storage/' . $path;
+            }
 
             
             if($validatedData['status'] == 'pemasukan'){
