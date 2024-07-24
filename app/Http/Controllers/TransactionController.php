@@ -9,6 +9,48 @@ use Illuminate\Http\Request;
 class TransactionController extends Controller
 {
 
+    // Hapus transaksi
+    public function deleteTransaction($transaction_id, Request $request)
+    {
+        try {
+            $user_id = $request->user()->id;
+
+            // Get the transaction record
+            $transaction = Transaction::find($transaction_id);
+            if (!$transaction) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 404,
+                    'message' => 'Transaction not found',
+                    'data' => null
+                ], 404);
+            }
+
+            // Check if the user is the owner of the transaction
+            if ($transaction->user_id !== $user_id) {
+                return response()->json([
+                    'success' => false,
+                    'code' => 403,
+                    'message' => 'Access denied',
+                    'data' => null
+                ], 403);
+            }
+
+            // Delete the transaction record
+            $transaction->delete();
+
+            return new MeditResource(true, 200, "Transaction deleted successfully", null);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'code' => 400,
+                'message' => $e->getMessage(),
+                'data' => null
+            ], 400);
+        }
+    }
+
     // Semua data transaksi
     public function index(Request $request){
         try{

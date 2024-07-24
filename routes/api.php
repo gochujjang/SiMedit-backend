@@ -86,6 +86,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     //delete porto
     Route::delete('/portofolio/{id}', [PortofolioController::class, 'delete']);
     Route::delete('/portofolio/{portofolio_id}/member/{member_id}', [PortoMemberController::class, 'deleteMember']);
+    Route::delete('/portotrans/{portotrans_id}', [PortotransController::class, 'deletePortotrans']);
+    Route::delete('/transaction/{id}', [TransactionController::class, 'deleteTransaction']);
 
 
     // Total Target Portofolio

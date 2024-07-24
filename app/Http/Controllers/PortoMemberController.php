@@ -27,6 +27,14 @@ class PortoMemberController extends Controller
                 ], 403);
             }
 
+            // Prevent members from deleting themselves
+            if ($user_id == $member_id) {
+                return response()->json([
+                    'message' => 'You cannot delete yourself from the portfolio',
+                    'status' => 403
+                ], 403);
+            }
+
             
             // Delete the member from PortoMember table
             $member = PortoMember::where('portofolio_id', $portofolio_id)
