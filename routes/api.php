@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('/portofolio-invite', [PortoMemberController::class, 'InviteMember']);
     // Mengambil detail portofolio (kl klik salh satu portofolio)
     Route::get('/portofolio/{id}', [PortofolioController::class, 'getPortoDetail']);
+    Route::post('/portofolio/{id}', [PortofolioController::class, 'update']);
 
 
     // Logout

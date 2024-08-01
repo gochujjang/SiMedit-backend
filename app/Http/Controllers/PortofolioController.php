@@ -217,6 +217,47 @@ class PortofolioController extends Controller
         }
     }
 
+    public function update($id, Request $request) {
+        try {
+            $validatedData = $request->validate([
+                'title' => 'required|max:255',
+                'target' => 'required|numeric'
+            ]);
+
+            $user_id = $request->user()->id;
+
+            // Check if the user is an owner of the portfolio
+            $portfolioMember = PortoMember::where('portofolio_id', $id)
+                ->where('user_id', $user_id)
+                ->where('status', 'owner')
+                ->first();
+
+            if (!$portfolioMember) {
+                return response()->json([
+                    'message' => 'Portfolio not found or access denied',
+                    'status' => 404
+                ], 404);
+            }
+
+            // Find the portfolio
+            $portfolio = Portofolio::findOrFail($id);
+            
+
+            // Update the portfolio with the validated data
+            $portfolio->update($validatedData);
+
+            $portfolio->persentase = ($portfolio->terkumpul / $portfolio->target) * 100;
+            $portfolio->save();
+
+            // Return a success response with the updated portfolio
+            return new MeditResource(true, 200, "Portfolio updated successfully", $portfolio);
+        } catch(\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage(),
+                'status' => 400
+            ], 400);
+        }
+    }
 //     public function inviteUser(Request $request, $portfolio_id)
 // {
 //     try {
