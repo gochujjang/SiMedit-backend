@@ -246,7 +246,7 @@ class PortofolioController extends Controller
             // Update the portfolio with the validated data
             $portfolio->update($validatedData);
 
-            $portfolio->persentase = ($portfolio->terkumpul / $portfolio->target) * 100;
+            $portfolio->persentase = (int)(($portfolio->terkumpul / $portfolio->target) * 100);
             $portfolio->save();
 
             // Return a success response with the updated portfolio
