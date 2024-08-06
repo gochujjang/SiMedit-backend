@@ -27,14 +27,14 @@ class TransactionController extends Controller
             }
 
             // Check if the user is the owner of the transaction
-            if ($transaction->user_id !== $user_id) {
-                return response()->json([
-                    'success' => false,
-                    'code' => 403,
-                    'message' => 'Access denied',
-                    'data' => null
-                ], 403);
-            }
+            // if ($transaction->user_id !== $user_id) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'code' => 403,
+            //         'message' => 'Access denied',
+            //         'data' => null
+            //     ], 403);
+            // }
 
             // Delete the transaction record
             $transaction->delete();
