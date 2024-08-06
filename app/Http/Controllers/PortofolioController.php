@@ -250,7 +250,7 @@ class PortofolioController extends Controller
             $portfolio->save();
 
             // Return a success response with the updated portfolio
-            return new MeditResource(true, 200, "Portfolio updated successfully", $portfolio);
+            return new MeditResource(true, 200, "Saving updated successfully", $portfolio);
         } catch(\Exception $e){
             return response()->json([
                 'message' => $e->getMessage(),
