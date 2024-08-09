@@ -7,6 +7,7 @@ use App\Models\Portofolio;
 use App\Models\PortoMember;
 use App\Models\Portotrans;
 use App\Models\User;
+use Brick\Math\BigInteger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -85,7 +86,7 @@ class PortotransController extends Controller
     public function store(Request $request){
         try {
             $validatedData = $request->validate([
-                'nominal' => 'required|numeric|max:999999999999999|min:1',
+                'nominal' => 'required|integer|max:999999999999999|min:1',
                 'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
@@ -96,7 +97,7 @@ class PortotransController extends Controller
     $userName = $request->user()->name;
 
     // Pastikan nominal adalah BigInteger
-    $nominal = (int) $validatedData['nominal']; // Ubah menjadi integer
+    $nominal = $validatedData['nominal']; // Ubah menjadi integer
     $validatedData['nominal'] = $nominal;
 
     $validatedData['user_id'] = $userId;
