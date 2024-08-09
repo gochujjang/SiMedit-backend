@@ -81,8 +81,9 @@ class PortotransController extends Controller
         );
         
     }
+
     public function store(Request $request){
-        try{
+        try {
             $validatedData = $request->validate([
                 'nominal' => 'required|numeric|max:999999999999999|min:1',
                 'portomember_id' => 'required',
@@ -90,63 +91,131 @@ class PortotransController extends Controller
                 'status' => 'required',
                 'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
             ]);
-
-            // Get the user ID from the request
+    
             $userId = $request->user()->id;
             $userName = $request->user()->name;
-
-
-            // Add user_id to the validated data
-            $validatedData['user_id'] = Auth::user()->id;
-
+    
+            $validatedData['user_id'] = $userId;
+    
             $portomember_id = $validatedData['portomember_id'];
-
+    
             $porto_id = PortoMember::where('portofolio_id', $portomember_id)->select('portofolio_id', 'user_id')->first();
-
-            $porto_terkumpul = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('terkumpul');
-            $porto_target = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('target');
-
-
+    
+            $porto_terkumpul = Portofolio::where('id', $porto_id['portofolio_id'])->value('terkumpul');
+            $porto_target = Portofolio::where('id', $porto_id['portofolio_id'])->value('target');
+    
             $user_data = User::where('id', $userId)->select('username', 'email')->first();
-
+    
             //upload foto
-            if($request->file('foto')){
+            if ($request->file('foto')) {
                 $randomString = Str::random(20);
-                // Generate a unique file name with user name and description
                 $extension = $request->file('foto')->getClientOriginalExtension();
                 $originalName = pathinfo($request->file('foto')->getClientOriginalName(), PATHINFO_FILENAME);
                 $sanitizedName = preg_replace('/[^A-Za-z0-9\-]/', '_', $originalName);
                 $filename = $userName . '_' . $randomString . '_' . $sanitizedName . '.' . $extension;
-
+    
                 $path = $request->file('foto')->storeAs('bukti-pembayaran', $filename);
                 $validatedData['foto'] = env('APP_URL') . '/storage/' . $path;
             }
-
-            
-            if($validatedData['status'] == 'pemasukan'){
-                $persentase = (int)(($porto_terkumpul[0] + $validatedData['nominal']) / $porto_target[0]) * 100;
+    
+            if ($validatedData['status'] == 'pemasukan') {
+                $persentase = (int)((($porto_terkumpul + $validatedData['nominal']) / $porto_target) * 100);
                 Portotrans::create($validatedData);
-                Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] + $validatedData['nominal'], 'persentase' => $persentase]);
-            }else{
-                if($porto_terkumpul[0] < $validatedData['nominal']){
-                     return response()->json([
+                Portofolio::where('id', $porto_id['portofolio_id'])
+                    ->update(['terkumpul' => $porto_terkumpul + $validatedData['nominal'], 'persentase' => $persentase]);
+            } else {
+                if ($porto_terkumpul < $validatedData['nominal']) {
+                    return response()->json([
                         'message' => 'Uang yang sudah terkumpul kurang!',
                         'status' => 400
                     ], 400);
-                }else{
-                    $persentase = (int)(($porto_terkumpul[0] - $validatedData['nominal']) / $porto_target[0]) * 100;
+                } else {
+                    $persentase = (int)((($porto_terkumpul - $validatedData['nominal']) / $porto_target) * 100);
                     Portotrans::create($validatedData);
-                    Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] - $validatedData['nominal'], 'persentase' => $persentase]);
+                    Portofolio::where('id', $porto_id['portofolio_id'])
+                        ->update(['terkumpul' => $porto_terkumpul - $validatedData['nominal'], 'persentase' => $persentase]);
                 }
             }
-            // return response()->json();
-            $validatedData['user_Data'] = $user_data;                                                                                
+    
+            $validatedData['user_Data'] = $user_data;
             return new MeditResource(true, 200, "success", $validatedData);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'status' => 400
             ], 400);
         }
     }
+    
+
+
+
+    // public function store(Request $request){
+    //     try{
+    //         $validatedData = $request->validate([
+    //             'nominal' => 'required|numeric|max:999999999999999|min:1',
+    //             'portomember_id' => 'required',
+    //             'keterangan' => 'required',
+    //             'status' => 'required',
+    //             'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
+    //         ]);
+
+    //         // Get the user ID from the request
+    //         $userId = $request->user()->id;
+    //         $userName = $request->user()->name;
+
+
+    //         // Add user_id to the validated data
+    //         $validatedData['user_id'] = Auth::user()->id;
+
+    //         $portomember_id = $validatedData['portomember_id'];
+
+    //         $porto_id = PortoMember::where('portofolio_id', $portomember_id)->select('portofolio_id', 'user_id')->first();
+
+    //         $porto_terkumpul = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('terkumpul');
+    //         $porto_target = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('target');
+
+
+    //         $user_data = User::where('id', $userId)->select('username', 'email')->first();
+
+    //         //upload foto
+    //         if($request->file('foto')){
+    //             $randomString = Str::random(20);
+    //             // Generate a unique file name with user name and description
+    //             $extension = $request->file('foto')->getClientOriginalExtension();
+    //             $originalName = pathinfo($request->file('foto')->getClientOriginalName(), PATHINFO_FILENAME);
+    //             $sanitizedName = preg_replace('/[^A-Za-z0-9\-]/', '_', $originalName);
+    //             $filename = $userName . '_' . $randomString . '_' . $sanitizedName . '.' . $extension;
+
+    //             $path = $request->file('foto')->storeAs('bukti-pembayaran', $filename);
+    //             $validatedData['foto'] = env('APP_URL') . '/storage/' . $path;
+    //         }
+
+            
+    //         if($validatedData['status'] == 'pemasukan'){
+    //             $persentase = (int)(($porto_terkumpul[0] + $validatedData['nominal']) / $porto_target[0]) * 100;
+    //             Portotrans::create($validatedData);
+    //             Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] + $validatedData['nominal'], 'persentase' => $persentase]);
+    //         }else{
+    //             if($porto_terkumpul[0] < $validatedData['nominal']){
+    //                  return response()->json([
+    //                     'message' => 'Uang yang sudah terkumpul kurang!',
+    //                     'status' => 400
+    //                 ], 400);
+    //             }else{
+    //                 $persentase = (int)(($porto_terkumpul[0] - $validatedData['nominal']) / $porto_target[0]) * 100;
+    //                 Portotrans::create($validatedData);
+    //                 Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] - $validatedData['nominal'], 'persentase' => $persentase]);
+    //             }
+    //         }
+    //         // return response()->json();
+    //         $validatedData['user_Data'] = $user_data;                                                                                
+    //         return new MeditResource(true, 200, "success", $validatedData);
+    //     }catch(\Exception $e){
+    //         return response()->json([
+    //             'message' => $e->getMessage(),
+    //             'status' => 400
+    //         ], 400);
+    //     }
+    // }
 }
