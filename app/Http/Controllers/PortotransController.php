@@ -85,7 +85,7 @@ class PortotransController extends Controller
     public function store(Request $request){
         try {
             $validatedData = $request->validate([
-                'nominal' => 'required|numeric|max:999999999999999|min:1',
+                'nominal' => 'required|max:999999999999999|min:1',
                 'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
