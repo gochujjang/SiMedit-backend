@@ -114,64 +114,57 @@ class PortoMemberController extends Controller
 
     public function InviteMember(Request $request) {
         try {
-            // Validate incoming request data
+            // Validate request data
             $validatedData = $request->validate([
                 'email' => 'required|email',
                 'porto_id' => 'required|exists:portofolios,id'
             ]);
     
-            // Fetch the user by email
-            $member = User::where('email', $validatedData['email'])->first();
+            $email = $validatedData['email'];
+            $porto_id = $validatedData['porto_id'];
     
             // Check if the user exists
-            if (!$member) {
+            $user = User::where('email', $email)->first();
+    
+            if (!$user) {
                 return response()->json([
-                    'message' => 'User with the provided email does not exist.',
+                    'message' => 'User is not registered',
                     'status' => 404
                 ], 404);
             }
     
             // Check if the user is already a member of the portfolio
-            $existingMember = PortoMember::where('portofolio_id', $validatedData['porto_id'])
-                ->where('user_id', $member->id)
-                ->first();
+            $existingMember = PortoMember::where('portofolio_id', $porto_id)
+                                        ->where('user_id', $user->id)
+                                        ->first();
     
             if ($existingMember) {
                 return response()->json([
-                    'message' => 'User is already a member of this portfolio.',
+                    'message' => 'User is already in this saving plan',
                     'status' => 409
                 ], 409);
             }
     
-            // Add the user as a member to the portfolio
-            PortoMember::create([
-                'user_id' => $member->id,
-                'portofolio_id' => $validatedData['porto_id'],
-                'status' => 'member'
-            ]);
+            // Add the user to the portfolio as a member
+            $input = ['user_id' => $user->id, 'portofolio_id' => $porto_id, 'status' => 'member'];
+            PortoMember::create($input);
     
             return new MeditResource(
                 true, 
                 200, 
-                "Member invited successfully.", 
-                [
-                    'user_id' => $member->id,
-                    'portofolio_id' => $validatedData['porto_id'],
-                    'status' => 'member'
-                ]
+                "Friend successfully invited", 
+                $input
             );
-        } catch (\Illuminate\Validation\ValidationException $e) {
+    
+        } catch(\Exception $e) {
             return response()->json([
-                'message' => 'Validation failed: ' . $e->errors(),
-                'status' => 422
-            ], 422);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'An unexpected error occurred: ' . $e->getMessage(),
-                'status' => 500
-            ], 500);
+                'message' => 'An error occurred while inviting the member',
+                'error' => $e->getMessage(),
+                'status' => 400
+            ], 400);
         }
     }
+    
     
     
     // public function InviteMember(Request $request) {
