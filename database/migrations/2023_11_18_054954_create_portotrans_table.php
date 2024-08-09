@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('portotrans', function (Blueprint $table) {
             $table->id();
-            $table->integer("nominal");
+            $table->bigInteger("nominal");
             $table->foreignId("portomember_id");
             $table->foreignId("user_id")->constrained('users');
             $table->string("keterangan");

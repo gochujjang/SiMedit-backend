@@ -96,7 +96,7 @@ class TransactionController extends Controller
     public function store(Request $request){
         try{
             $validated = $request->validate([
-                'nominal' => 'required',
+                'nominal' => 'required|numeric|max:999999999999999|min:1',
                 'tgl' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required'

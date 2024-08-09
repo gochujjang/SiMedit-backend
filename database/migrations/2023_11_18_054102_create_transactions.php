@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->integer("nominal");
+            $table->bigInteger("nominal");
             $table->date("tgl");
             $table->string("keterangan");
             $table->enum('status', ['pemasukan', 'pengeluaran']);

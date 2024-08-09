@@ -84,7 +84,7 @@ class PortotransController extends Controller
     public function store(Request $request){
         try{
             $validatedData = $request->validate([
-                'nominal' => 'required',
+                'nominal' => 'required|numeric|max:999999999999999|min:1',
                 'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
@@ -107,7 +107,6 @@ class PortotransController extends Controller
             $porto_target = Portofolio::where('id', $porto_id['portofolio_id'])->pluck('target');
 
 
-            // $user_data = User::where('id', (int)$porto_id['user_id'])->select('username', 'email')->first();
             $user_data = User::where('id', $userId)->select('username', 'email')->first();
 
             //upload foto

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('portofolios', function (Blueprint $table) {
             $table->id();
             $table->string("title");
-            $table->integer("target");
-            $table->integer("terkumpul");
+            $table->bigInteger("target");
+            $table->bigInteger("terkumpul");
             $table->integer("persentase")->default(0);
             // $table->foreignId("user_id");
             $table->timestamps();
