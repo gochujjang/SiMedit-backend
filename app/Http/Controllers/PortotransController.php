@@ -88,8 +88,7 @@ class PortotransController extends Controller
                 'portomember_id' => 'required',
                 'keterangan' => 'required',
                 'status' => 'required',
-                // 'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
-                'foto' => 'image|mimes:jpeg,jpg,png|max:2048',
+                'foto' => 'required|image|mimes:jpeg,jpg,png|max:2048',
             ]);
 
             // Get the user ID from the request
