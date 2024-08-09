@@ -124,19 +124,19 @@ class PortotransController extends Controller
 
             
             if($validatedData['status'] == 'pemasukan'){
-                $persentase = (($porto_terkumpul[0] + (int)$validatedData['nominal']) / $porto_target[0]) * 100;
+                $persentase = (int)(($porto_terkumpul[0] + $validatedData['nominal']) / $porto_target[0]) * 100;
                 Portotrans::create($validatedData);
-                Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] + (int)$validatedData['nominal'], 'persentase' => $persentase]);
+                Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] + $validatedData['nominal'], 'persentase' => $persentase]);
             }else{
-                if($porto_terkumpul[0] < (int)$validatedData['nominal']){
+                if($porto_terkumpul[0] < $validatedData['nominal']){
                      return response()->json([
                         'message' => 'Uang yang sudah terkumpul kurang!',
                         'status' => 400
                     ], 400);
                 }else{
-                    $persentase = (($porto_terkumpul[0] - (int)$validatedData['nominal']) / $porto_target[0]) * 100;
+                    $persentase = (int)(($porto_terkumpul[0] - $validatedData['nominal']) / $porto_target[0]) * 100;
                     Portotrans::create($validatedData);
-                    Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] - (int)$validatedData['nominal'], 'persentase' => $persentase]);
+                    Portofolio::where('id', $porto_id['portofolio_id'])->update(['terkumpul' => $porto_terkumpul[0] - $validatedData['nominal'], 'persentase' => $persentase]);
                 }
             }
             // return response()->json();
